@@ -1,4 +1,5 @@
-use email_newsletter::run;
+use email_newsletter::configuration::get_configuration;
+use email_newsletter::startup::run;
 use std::net::TcpListener;
 
 use actix_web::web;
@@ -15,9 +16,10 @@ fn index(form: web::Form<FormData>) -> String {
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    // Create the listener first
-    let listener = TcpListener::bind("127.0.0.1:8080")?;
-
-    // Pass it to run()
+    // Panic if we can't read configuration
+    let configuration = get_configuration().expect("Failed to read configuration.");
+    // We have removed the hard-coded `8000` - it's now coming from our settings!
+    let address = format!("127.0.0.1:{}", configuration.application_port);
+    let listener = TcpListener::bind(address)?;
     run(listener)?.await
 }

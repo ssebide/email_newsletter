@@ -78,3 +78,7 @@ fn spawn_app() -> String {
     let _ = tokio::spawn(server);
     format!("http://127.0.0.1:{}", port)
 }
+
+async fn health_check() -> HttpResponse {
+    HttpResponse::Ok().finish()
+}
